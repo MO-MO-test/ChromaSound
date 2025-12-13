@@ -3,7 +3,6 @@
 /* ------------------------------------- */
 body {
     background-color: #1a0a2e; /* ダークで深い紫 */
-    /* 背景画像/ノイズ関連の記述はすべて削除済み */
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -18,7 +17,7 @@ body {
     position: relative;
 }
 
-/* ネオンテキストエフェクト (アニメーションなしの安定発光) */
+/* ネオンテキストエフェクト */
 .neon-text {
     color: #fff;
     text-shadow:
@@ -76,6 +75,11 @@ main {
 /* 3. フォームとボタンのスタイル */
 /* ------------------------------------- */
 
+#keyword-input {
+    /* キーワード入力コンテナを中央に配置するための調整 */
+    text-align: center;
+}
+
 #keyword-input label {
     display: block;
     margin-bottom: 10px;
@@ -85,17 +89,26 @@ main {
 }
 
 #keyword-input input {
-    width: 100%;
+    /* ★修正点: 幅を親要素の90%にして、パディング内に収まるようにする★ */
+    width: 90%; 
+    max-width: 400px; /* 必要に応じて最大幅を設定 */
+    
     padding: 12px 15px;
     margin-top: 5px;
     margin-bottom: 25px;
-    border: 1px solid #0ff; /* シアンの境界線 */
+
+    border: 1px solid #0ff; 
     border-radius: 8px;
     background-color: rgba(0, 0, 0, 0.3); 
     color: #e0e0e0;
     font-size: 1.05em;
     outline: none;
     transition: border-color 0.3s, box-shadow 0.3s;
+    
+    /* ★追加: 中央寄せのためにブロック要素として設定★ */
+    display: block; 
+    margin-left: auto;
+    margin-right: auto;
 }
 #keyword-input input:focus {
     border-color: #0fa; 
@@ -195,10 +208,10 @@ main {
 }
 
 /* ------------------------------------- */
-/* 5. 再生時アニメーション用CSS (カラーホイール脈動と波形) */
+/* 5. 再生時アニメーションと波形コンテナのスタイル */
 /* ------------------------------------- */
 
-/* キーフレーム定義：カラーホイールがわずかに拡大縮小し、発光するアニメーション */
+/* キーフレーム定義：カラーホイール脈動アニメーション */
 @keyframes wheelPulse {
     0% {
         transform: scale(1);
@@ -231,8 +244,40 @@ main {
     border: 1px solid #0ff;
 }
 
+/* リアルタイム波形用のCanvasは、中身を使わないので透明に */
 #audio-wave-canvas {
     width: 100%;
     height: 100%;
     display: block;
+    opacity: 0; 
+}
+
+/* --- 【最終的なデザインの肝】静的グラデーションの波形表現 --- */
+/* JSからCSS変数（--wave-position）で背景位置を直接制御する */
+
+.audio-wave-container::before {
+    content: "";
+    position: absolute;
+    top: 50%; /* 中央に配置 */
+    left: 0;
+    right: 0;
+    height: 10px; /* 線の太さ */
+    transform: translateY(-50%);
+    
+    /* 波のように見えるグラデーションパターン */
+    background: repeating-linear-gradient(
+        45deg,
+        #0ff,        /* シアン */
+        #0ff 5px,
+        rgba(0, 255, 255, 0.2) 5px, /* 透明なシアン */
+        rgba(0, 255, 255, 0.2) 10px
+    );
+    background-size: 200% 10px; 
+    box-shadow: 0 0 5px rgba(0, 255, 255, 0.8); /* ネオン発光 */
+    
+    /* ★修正点: JSから渡されるCSS変数を利用して背景位置を決定する★ */
+    background-position: var(--wave-position, 0%) 0;
+    
+    /* CSSアニメーションは全て削除済み */
+    animation: none; 
 }
