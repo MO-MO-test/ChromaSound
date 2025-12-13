@@ -3,19 +3,19 @@
 /* 1. 全体設定 (Body, Background) */
 /* =============================================== */
 :root {
-    --glass-color: rgba(255, 255, 255, 0.1);
+    /* ★修正点: ガラスの透過度を黒寄りで透過率を上げる (暗くする) */
+    --glass-color: rgba(0, 0, 0, 0.4); 
     --neon-blue: #00e0ff;
     --neon-purple: #ff00ff;
     --neon-green: #00ff80;
     --main-bg-color: #0d1a2c;
-    --wave-position: 0%; /* JSでアニメーション制御 */
-    --selected-color: var(--neon-blue); /* JSで選択された色が入る */
+    --wave-position: 0%; 
+    --selected-color: var(--neon-blue); 
 }
 
 @font-face {
     font-family: 'CyberFont';
     src: url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
-    /* 実際にはOrbitronをダウンロードして使用することを推奨 */
 }
 
 body {
@@ -30,10 +30,8 @@ body {
     background-color: var(--main-bg-color);
     overflow-x: hidden; 
     transition: background-color 0.5s;
-    
-    /* ★修正点: ファイル名をリポジトリ内の名前に変更 */
+    /* ★修正点: 背景画像のパスをリポジトリ内の名前に変更 */
     background-image: url('fantasy-cyberpunk-narnia.png'); 
-    
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -44,13 +42,13 @@ body {
 /* =============================================== */
 .container {
     display: flex;
-    flex-direction: row; /* 横並び */
+    flex-direction: row; 
     gap: 30px;
     padding: 30px;
     max-width: 1200px; 
     width: 90%; 
     z-index: 10;
-    margin: auto; /* コンテナを中央に配置 */
+    margin: auto; 
     transition: all 0.5s;
 }
 
@@ -64,7 +62,6 @@ body {
     flex: 1; 
     min-width: 300px; 
     transition: all 0.3s ease-in-out;
-    /* パネル内のコンテンツを縦方向に配置し、高さを揃える */
     display: flex;
     flex-direction: column;
 }
@@ -77,7 +74,8 @@ body {
 h2 {
     text-align: center;
     color: #fff;
-    text-shadow: 0 0 5px var(--neon-blue), 0 0 10px var(--neon-blue);
+    /* ★修正点: 文字の影を強化し視認性を向上 */
+    text-shadow: 0 0 8px var(--neon-blue), 0 0 15px var(--neon-blue);
     margin-bottom: 25px;
     font-size: 1.8em;
 }
@@ -190,8 +188,9 @@ label {
     line-height: 1.6;
     font-size: 0.95em;
     color: #e0e0e0;
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
-    flex-grow: 1; /* パネルの高さいっぱいまで使う */
+    /* ★修正点: 文字の影を強化し視認性を向上 */
+    text-shadow: 0 0 3px rgba(0, 0, 0, 0.9);
+    flex-grow: 1; 
 }
 
 /* =============================================== */
@@ -202,7 +201,7 @@ label {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    flex-grow: 1; /* パネルの高さいっぱいまで使う */
+    flex-grow: 1; 
 }
 
 #track-title {
@@ -274,6 +273,7 @@ label {
     left: 0;
     width: 200%; 
     height: 100%;
+    /* 波形グラデーション */
     background: repeating-linear-gradient(
         45deg,
         var(--neon-blue),
