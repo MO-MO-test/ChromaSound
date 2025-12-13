@@ -9,12 +9,10 @@ const moodResultDisplay = document.getElementById('mood-result');
 const playButton = document.getElementById('play-button');
 const trackTitleDisplay = document.getElementById('track-title');
 
-// ★追加：親要素（.player-controls）を取得
 const playerControls = playButton.closest('.player-controls');
 
-// ★追加：オーディオ波形コンテナを取得
 const waveContainer = document.querySelector('.audio-wave-container'); 
-let animationInterval; // アニメーションIDを保持する変数
+let animationInterval; 
 
 let selectedHsl = { h: 0, s: 0, l: 0 }; 
 
@@ -35,17 +33,17 @@ const radius = size / 2;
 // ===============================================
 const musicDatabase = [
     // 外部URLを使用します。
-    { title: "Quiet Raindrops (Ambient)", mood: ["静寂", "雨", "ピアノ", "落ち着いた", "スロー", "インストゥルメンタル", "アンビエント", "リラックス", "癒やし", "冬"], genre: "Ambient/Piano", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
-    { title: "Summer Day Pop (Upbeat)", mood: ["明るい", "太陽", "アップテンポ", "軽快", "楽しい", "情熱的な", "ポップ", "運動", "爽快", "夏"], genre: "Pop", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
-    { title: "Midnight Coffee Jazz (Bossa)", mood: ["落ち着いた", "コーヒー", "洗練", "スローテンポ", "知的な", "ジャズ", "ボサノバ", "仕事", "秋", "リラックス"], genre: "Jazz/Bossa Nova", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" },
-    { title: "Neon Future Beat (Electro)", mood: ["ハイテンポ", "エネルギッシュ", "シンセサイザー", "力強い", "情熱的な", "ロック", "エレクトロ", "kpop", "ドライブ"], genre: "Electro/KPOP", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" },
-    { title: "Zen Garden Flute (Healing)", mood: ["安らぎ", "静寂", "インスト", "爽やか", "癒やし", "スロー", "春", "リラックス"], genre: "Healing/Instrumental", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3" },
-    { title: "Heavy Metal Night (Rock)", mood: ["重厚感", "シリアスな", "情熱的な", "ロック", "エレクトロ", "力強い", "冬", "運動"], genre: "Rock/Metal", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3" }
+    { title: "Quiet Raindrops (Ambient)", mood: ["calm", "rain", "piano", "slow", "ambient", "healing", "winter"], genre: "Ambient/Piano", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
+    { title: "Summer Day Pop (Upbeat)", mood: ["bright", "sun", "upbeat", "pop", "energetic", "summer", "sport"], genre: "Pop", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
+    { title: "Midnight Coffee Jazz (Bossa)", mood: ["relaxed", "coffee", "sophisticated", "slow", "jazz", "bossa nova", "work", "autumn"], genre: "Jazz/Bossa Nova", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" },
+    { title: "Neon Future Beat (Electro)", mood: ["high-tempo", "energetic", "synth", "powerful", "rock", "electro", "drive", "sci-fi"], genre: "Electro/KPOP", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" },
+    { title: "Zen Garden Flute (Healing)", mood: ["peace", "quiet", "instrumental", "refreshing", "slow", "spring", "healing"], genre: "Healing/Instrumental", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3" },
+    { title: "Heavy Metal Night (Rock)", mood: ["heavy", "serious", "powerful", "rock", "metal", "winter", "battle"], genre: "Rock/Metal", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3" }
 ];
 
 
 // ===============================================
-// 3-6. 描画・変換・分析・検索ロジック 
+// 3-6. 描画・変換・分析・検索ロジック (日英対応＆拡張キーワード)
 // ===============================================
 function drawColorWheel() {
     const gradient = ctx.createConicGradient(0, center, center);
@@ -83,72 +81,132 @@ function rgbToHsl(r, g, b) {
 function analyzeMood(hslData, keywords) {
     let moodH = '';
     const h = hslData.h;
-    if (h >= 330 || h < 30) { moodH = '情熱的な'; }
-    else if (h >= 30 && h < 90) { moodH = '明るい、楽しい'; }
-    else if (h >= 90 && h < 150) { moodH = '安らぎのある'; }
-    else if (h >= 150 && h < 210) { moodH = '爽やかで静かな'; }
-    else if (h >= 210 && h < 270) { moodH = '落ち着いた、知的な'; }
-    else { moodH = '神秘的な'; }
+    if (h >= 330 || h < 30) { moodH = 'passionate'; }
+    else if (h >= 30 && h < 90) { moodH = 'bright, joyful'; }
+    else if (h >= 90 && h < 150) { moodH = 'peaceful'; }
+    else if (h >= 150 && h < 210) { moodH = 'refreshing, quiet'; }
+    else if (h >= 210 && h < 270) { moodH = 'calm, intellectual'; }
+    else { moodH = 'mysterious'; }
 
     let energySL = '';
     const s = hslData.s; 
     const l = hslData.l; 
-    if (s > 0.7 && l > 0.5) { energySL = 'ハイテンポで力強い'; } 
-    else if (s < 0.2) { energySL = '静寂で、テンポが遅い'; } 
-    else if (l < 0.3) { energySL = '重厚感のある、シリアスな'; } 
-    else { energySL = '中テンポで軽快な'; }
+
+    if (s > 0.7 && l > 0.5) { 
+        energySL = 'high-tempo and powerful';
+    } else if (s < 0.2) { 
+        energySL = 'silent, slow-tempo';
+    } else if (l < 0.3) {
+        energySL = 'heavy and serious';
+    } else {
+        energySL = 'mid-tempo and light';
+    }
 
     let influenceList = [];
+    
+    // キーワードをすべて小文字に変換し、スペース/コンマで区切る
     const keywordArray = keywords.toLowerCase().split(/[, ]+/).filter(k => k.length > 0);
+
     keywordArray.forEach(kw => {
-        if (kw === '勉強' || kw === '集中' || kw === '仕事') { influenceList.push('歌詞のないインストゥルメンタル構成'); } 
-        else if (kw === 'リラックス' || kw === '癒やし' || kw === 'ヒーリング') { influenceList.push('環境音（アンビエント）とゆったりとしたテンポ'); } 
-        else if (kw === '運動' || kw === 'ドライブ' || kw === '爽快') { influenceList.push('強いリズムとシンセまたはギターリフ'); } 
-        else if (kw === '睡眠' || kw === '寝る') { influenceList.push('ホワイトノイズや静かなドローン音'); } 
-        else if (kw === '悲しい' || kw === '切ない') { influenceList.push('マイナーコード進行とストリングス（弦楽器）の強調'); } 
-        else if (kw === '楽しい' || kw === 'ハッピー') { influenceList.push('メジャーコード進行と軽快なパーカッション'); } 
-        else if (kw === '雨') { influenceList.push('しっとりとしたピアノの音色とリバーブ'); } 
-        else if (kw === 'コーヒー' || kw === 'カフェ') { influenceList.push('洗練されたジャズまたはボサノバ風のサウンド'); } 
-        else if (kw === 'チル') { influenceList.push('メロディよりムードを重視したスローテンポ'); } 
-        else if (kw === '太陽') { influenceList.push('開放感のあるアップテンポとホーン（管楽器）の使用'); } 
-        else if (kw === '月') { influenceList.push('神秘的なコードとミニマルなアレンジ'); } 
-        else if (kw === 'kpop' || kw === 'jpop' || kw === '洋楽') { influenceList.push('強いビートとシンセサイザーを強調'); } 
-        else if (kw === '春') { influenceList.push('明るく透明感のある音色と中〜高テンポ'); } 
-        else if (kw === '夏') { influenceList.push('開放感と強いビート、マリンバの使用'); } 
-        else if (kw === '秋') { influenceList.push('落ち着いたトーンのギターと少しノスタルジックなメロディ'); } 
-        else if (kw === '冬') { influenceList.push('深く冷たいシンセパッドと低音域の強調'); }
+        // ★★★ 共通キーワード (勉強・仕事) ★★★
+        if (['study', 'focus', 'work', '勉強', '集中', '仕事'].includes(kw)) {
+             influenceList.push('instrumental structure without lyrics');
+        } 
+        // ★★★ 共通キーワード (リラックス・癒やし) ★★★
+        else if (['relax', 'healing', 'chill', 'リラックス', '癒し', '落ち着く'].includes(kw)) {
+            influenceList.push('ambient soundscape and relaxed tempo');
+        } 
+        // ★★★ 共通キーワード (運動・元気) ★★★
+        else if (['sport', 'drive', 'energetic', '運動', 'ドライブ', '元気'].includes(kw)) {
+            influenceList.push('strong rhythm and synth or guitar riffs');
+        } 
+        // ★★★ 共通キーワード (睡眠・夢) ★★★
+        else if (['sleep', 'bed', '睡眠', '眠り'].includes(kw)) {
+            influenceList.push('white noise or quiet drone sounds');
+        } else if (['dream', '夢', '幻想'].includes(kw)) {
+            influenceList.push('ethereal synth pads and slow, evolving melodies');
+        } 
+        // ★★★ 共通キーワード (感情) ★★★
+        else if (['sad', 'lonely', '悲しい', '寂しい'].includes(kw)) {
+            influenceList.push('minor chord progression and string emphasis');
+        } else if (['happy', 'joyful', '楽しい', '嬉しい'].includes(kw)) {
+            influenceList.push('major chord progression and light percussion');
+        } 
+        // ★★★ 環境キーワード ★★★
+        else if (['rain', 'cafe', '雨', 'カフェ'].includes(kw)) {
+            influenceList.push('smooth piano tones and reverb, jazz/bossa nova elements');
+        } else if (['sun', 'summer', '太陽', '夏'].includes(kw)) {
+            influenceList.push('open-air atmosphere and upbeat tempo');
+        } 
+        
+        /* ★★★ 拡張キーワード: ゲーム・ファンタジー ★★★ */
+        else if (['rpg', 'fantasy', 'medieval', 'rpg', 'ファンタジー', '中世'].includes(kw)) {
+            influenceList.push('orchestral sounds and epic melodies, epic/cinematic feel');
+        } else if (['sci-fi', 'cyber', 'future', 'sf', 'サイバー', '未来'].includes(kw)) {
+            influenceList.push('heavy synth bass and electronic textures, futuristic beat');
+        } else if (['fps', 'battle', 'action', '戦闘', 'アクション', 'バトル'].includes(kw)) {
+            influenceList.push('fast tempo and aggressive percussion, high energy');
+        } else if (['lo-fi', 'aesthetic', 'ローファイ', 'エモい'].includes(kw)) {
+            influenceList.push('vinyl crackle effects and simple, repetitive melodies');
+        }
+
+        /* ★★★ 拡張キーワード: 数学・科学・抽象 ★★★ */
+        else if (['math', 'logic', 'abstract', '数', '論理', '抽象'].includes(kw)) {
+            influenceList.push('minimalist and repetitive patterns, complex rhythms');
+        } else if (['universe', 'space', '宇宙', '星'].includes(kw)) {
+            influenceList.push('vast, deep synth pads and echoing sound effects');
+        } else if (['technology', 'tech', 'テクノロジー', '機械'].includes(kw)) {
+            influenceList.push('clean, rhythmic beeps and digital sound synthesis');
+        }
+        
+        /* 季節・その他の用語 */
+        else if (['spring', '春'].includes(kw)) {
+            influenceList.push('bright, clear tones and mid-to-high tempo');
+        } else if (['autumn', 'fall', '秋'].includes(kw)) {
+            influenceList.push('calm guitar tones and slightly nostalgic melodies');
+        } else if (['winter', '冬'].includes(kw)) {
+            influenceList.push('deep, cold synth pads and low-end emphasis');
+        }
     });
     
     let keywordInfluence = '';
     if (influenceList.length > 0) {
-        keywordInfluence = `特徴として、${influenceList.join('、')}を伴う`;
+        keywordInfluence = `with features like: ${influenceList.join(', ')}`;
     }
 
-    let primaryGenre = 'インストゥルメンタル';
-    if (keywordArray.includes('kpop') || keywordArray.includes('jpop') || keywordArray.includes('洋楽')) {
-        primaryGenre = keywordArray.find(k => k.includes('pop') || k.includes('洋楽')).toUpperCase();
-    } else if (keywordArray.includes('コーヒー')) {
-        primaryGenre = 'ボサノバ/ジャズ';
-    } else if (h >= 330 || h < 30) { 
-        primaryGenre = 'ロックまたはエレクトロ';
-    } else if (h >= 210 && h < 270) { 
-        primaryGenre = 'アンビエントまたはクラシック';
+    let primaryGenre = 'Instrumental';
+    if (keywordArray.includes('pop') || keywordArray.includes('kpop')) {
+        primaryGenre = 'Pop/KPOP';
+    } else if (keywordArray.includes('jazz') || keywordArray.includes('bossa')) {
+        primaryGenre = 'Jazz/Bossa Nova';
+    } else if (h >= 330 || h < 30 || keywordArray.includes('rock')) { 
+        primaryGenre = 'Rock or Electro';
+    } else if (h >= 210 && h < 270 || keywordArray.includes('ambient')) { 
+        primaryGenre = 'Ambient or Classical';
+    } else if (keywordArray.includes('rpg') || keywordArray.includes('fantasy') || keywordArray.includes('ファンタジー')) {
+        primaryGenre = 'Cinematic/Orchestral';
     }
     
-    return `${energySL} ${moodH} ${keywordInfluence} ${primaryGenre}音楽を提案します。`;
+    return `Based on color and keywords, we propose a ${energySL} ${moodH} track ${keywordInfluence}. Suggested Genre: ${primaryGenre}.`;
 }
+
 
 function searchTrack(moodDescription, hslData) { 
     const searchTerms = moodDescription.toLowerCase().split(/[, ]+/).filter(t => t.length > 2);
+
     let bestMatch = null;
     let highestScore = -1;
 
     musicDatabase.forEach(track => {
         let score = 0;
         const trackKeywords = (track.title + ' ' + track.genre + ' ' + track.mood.join(' ')).toLowerCase();
+        
         searchTerms.forEach(term => {
-            if (trackKeywords.includes(term)) { score++; }
+            if (trackKeywords.includes(term)) {
+                score++;
+            }
         });
+
         if (score > highestScore) {
             highestScore = score;
             bestMatch = track;
@@ -156,18 +214,20 @@ function searchTrack(moodDescription, hslData) {
     });
 
     if (highestScore <= 1 || !bestMatch) { 
-        console.log("フォールバック処理: 色相に基づいて曲を提案します。");
+        console.log("Fallback processing: Suggesting track based on hue.");
+
         let fallbackMood = '';
         const h = hslData.h;
-        if (h >= 330 || h < 30) { fallbackMood = '情熱的な'; }
-        else if (h >= 30 && h < 90) { fallbackMood = '明るい'; }
-        else if (h >= 90 && h < 150) { fallbackMood = '安らぎ'; }
-        else if (h >= 150 && h < 210) { fallbackMood = '爽やか'; }
-        else if (h >= 210 && h < 270) { fallbackMood = '落ち着いた'; }
-        else { fallbackMood = '神秘的な'; }
+        if (h >= 330 || h < 30) { fallbackMood = 'passionate'; }
+        else if (h >= 30 && h < 90) { fallbackMood = 'bright'; }
+        else if (h >= 90 && h < 150) { fallbackMood = 'peace'; }
+        else if (h >= 150 && h < 210) { fallbackMood = 'refreshing'; }
+        else if (h >= 210 && h < 270) { fallbackMood = 'calm'; }
+        else { fallbackMood = 'mysterious'; }
 
         return musicDatabase.find(track => track.mood.includes(fallbackMood)) || musicDatabase[0];
     }
+    
     return bestMatch;
 }
 
@@ -179,13 +239,21 @@ colorWheelCanvas.addEventListener('click', (event) => {
     const rect = colorWheelCanvas.getBoundingClientRect();
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
+
     const pixel = ctx.getImageData(x, y, 1, 1).data;
-    const hsl = rgbToHsl(pixel[0], pixel[1], pixel[2]);
+    const r = pixel[0];
+    const g = pixel[1];
+    const b = pixel[2];
+
+    const hsl = rgbToHsl(r, g, b);
+    
     selectedHsl = hsl; 
+
     const hslColor = `hsl(${hsl.h}, ${hsl.s*100}%, ${hsl.l*100}%)`;
     colorWheel.style.setProperty('--selected-color', hslColor);
     colorWheel.classList.add('selected'); 
-    console.log(`選択された色: HSL(${hsl.h}°, ${hsl.s*100}%, ${hsl.l*100}%)`);
+    
+    console.log(`Selected Color: HSL(${hsl.h}°, ${hsl.s*100}%, ${hsl.l*100}%)`);
 });
 
 
@@ -194,18 +262,24 @@ colorWheelCanvas.addEventListener('click', (event) => {
 // ===============================================
 analyzeButton.addEventListener('click', () => {
     if (selectedHsl.h === 0 && selectedHsl.s === 0 && selectedHsl.l === 0) {
-        alert("まずカラーホイールをクリックして色を選択してください！");
+        alert("Please click the color wheel to select a color first!");
         return;
     }
+    
     const colorData = selectedHsl; 
     const keywordText = keywordsInput.value.trim();
+    
     const musicMoodDescription = analyzeMood(colorData, keywordText); 
     const suggestedTrack = searchTrack(musicMoodDescription, colorData);
+
     const trackMoodTags = suggestedTrack.mood.join(', ');
-    const finalMoodDisplay = `色とキーワードから導かれた要素に基づき、以下の特徴を持つ音楽を提案します。\n\n[提案された楽曲の特徴]: ${trackMoodTags} (${suggestedTrack.genre})`;
+    const finalMoodDisplay = `Based on color and keywords, we propose a track with the following elements: ${trackMoodTags} (${suggestedTrack.genre}). ${musicMoodDescription}`;
+
     moodResultDisplay.textContent = finalMoodDisplay;
-    trackTitleDisplay.textContent = `曲名: ${suggestedTrack.title}`;
+    trackTitleDisplay.textContent = `Track Name: ${suggestedTrack.title}`;
+    
     playButton.dataset.trackUrl = suggestedTrack.url; 
+
     const hslColor = `hsl(${selectedHsl.h}, ${selectedHsl.s*100}%, ${selectedHsl.l*100}%)`;
     colorWheel.style.setProperty('--selected-color', hslColor);
     colorWheel.classList.add('selected');
@@ -216,46 +290,43 @@ analyzeButton.addEventListener('click', () => {
 // 9. イベントリスナー（再生ボタン）
 // ===============================================
 
-// ★★★ JSアニメーションロジックの最終修正版（右から左へ） ★★★
+// ★★★ JSアニメーションロジック（右から左へ） ★★★
 let backgroundPositionX = 0;
-let waveSpeed = 0.5; // 移動速度 (ピクセル/フレーム)
-const maxOffset = 100; // グラデーションの最大移動幅 (background-size: 200%に対応)
+let waveSpeed = 0.5; 
+const maxOffset = 100; 
 
 function startWaveAnimation() {
     if (animationInterval) {
         clearInterval(animationInterval); 
     }
 
-    // 初期化
-    backgroundPositionX = 100; // ★修正: 右端からスタート
-    waveSpeed = -0.5; // ★修正: 左向き (マイナス) でスタート
+    // 初期化: 右から左へ流れる設定
+    backgroundPositionX = 100; // 右端からスタート
+    waveSpeed = -0.5; // 左向き (マイナス) でスタート
 
     animationInterval = setInterval(() => {
-        // 現在位置を更新
         backgroundPositionX += waveSpeed;
 
-        // ★修正済み: 左端(0)に到達したら、即座に右端(100)に戻る (一方通行ループ)
+        // 左端(0)に到達したら、即座に右端(100)に戻る (一方通行ループ)
         if (backgroundPositionX <= 0) {
             backgroundPositionX = maxOffset; 
         }
         
-        // CSS変数を直接書き換え
         if (waveContainer) {
             waveContainer.style.setProperty('--wave-position', `${backgroundPositionX}%`);
         }
-    }, 50); // 50ms (20fps) で更新
-    console.log("JSによる波形アニメーション開始 (右から左へ)。");
+    }, 50); 
+    console.log("Wave animation started (Right to Left).");
 }
 
 function stopWaveAnimation() {
     if (animationInterval) {
         clearInterval(animationInterval);
         animationInterval = null;
-        // 停止時、グラデーションを中央に戻す (見た目上のリセット)
         if (waveContainer) {
             waveContainer.style.setProperty('--wave-position', `0%`);
         }
-        console.log("JSによる波形アニメーション停止。");
+        console.log("Wave animation stopped.");
     }
 }
 
@@ -265,7 +336,7 @@ playButton.addEventListener('click', () => {
     const trackUrl = playButton.dataset.trackUrl;
     
     if (!trackUrl || trackUrl.includes("dummy")) {
-        alert("まず「ムードを分析する」ボタンを押して、楽曲を提案させてください！");
+        alert("Please press the 'Analyze Mood' button to suggest a track first!");
         return;
     }
     
@@ -278,7 +349,7 @@ playButton.addEventListener('click', () => {
     if (audioPlayer.paused) {
         // --- ★ 再生開始 ★ ---
         
-        // UIの視覚フィードバック（アニメーション開始）
+        // UIの視覚フィードバック
         colorWheelContainer.classList.add('is-playing-pulse'); 
         const hue = selectedHsl.h;
         colorWheel.style.boxShadow = `0 0 25px 5px hsl(${hue}, 100%, 50%)`; 
@@ -286,15 +357,15 @@ playButton.addEventListener('click', () => {
         playButton.classList.add('playing'); 
         playerControls.classList.add('is-playing'); 
 
-        startWaveAnimation(); // ★★★ アニメーション開始！ ★★★
+        startWaveAnimation(); // アニメーション開始！
 
         audioPlayer.play()
             .then(() => {
-                console.log("音楽再生開始！");
+                console.log("Music playback started!");
             })
             .catch(e => {
-                alert("再生エラーが発生しました。ブラウザのコンソールを確認してください。");
-                console.error("再生エラー:", e);
+                alert("Playback error occurred. Check the browser console.");
+                console.error("Playback Error:", e);
                 // 失敗時、状態をリセット
                 colorWheelContainer.classList.remove('is-playing-pulse');
                 
@@ -302,7 +373,7 @@ playButton.addEventListener('click', () => {
                 playerControls.classList.remove('is-playing');
                 
                 colorWheel.style.boxShadow = `0 0 15px rgba(0, 0, 0, 0.1)`; 
-                stopWaveAnimation(); // ★★★ アニメーション停止！ ★★★
+                stopWaveAnimation(); // アニメーション停止！
             });
     } else {
         // --- ★ 一時停止 ★ ---
@@ -312,10 +383,10 @@ playButton.addEventListener('click', () => {
         playButton.classList.remove('playing');
         playerControls.classList.remove('is-playing'); 
         
-        stopWaveAnimation(); // ★★★ アニメーション停止！ ★★★
+        stopWaveAnimation(); // アニメーション停止！
         
         audioPlayer.pause();
-        console.log("音楽一時停止。");
+        console.log("Music paused.");
     }
 });
 
@@ -326,7 +397,7 @@ audioPlayer.addEventListener('ended', () => {
     
     colorWheelContainer.classList.remove('is-playing-pulse'); 
     colorWheel.style.boxShadow = `0 0 15px rgba(0, 0, 0, 0.1)`; 
-    console.log("音楽再生終了。");
+    console.log("Music playback ended.");
     
-    stopWaveAnimation(); // ★★★ アニメーション停止！ ★★★
+    stopWaveAnimation(); // アニメーション停止！
 });
