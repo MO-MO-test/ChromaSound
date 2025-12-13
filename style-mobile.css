@@ -89,3 +89,25 @@ h2 {
     border-left: 8px solid var(--neon-purple);
     border-right: 8px solid var(--neon-purple);
 }
+
+/* =============================================== */
+/* 7. メインタイトル (復活) */
+/* =============================================== */
+#main-title {
+    font-size: 3.5em; /* PCでは大きく */
+    font-weight: 700;
+    text-align: center;
+    color: #fff;
+    /* ネオン効果を適用 */
+    text-shadow: 0 0 10px var(--neon-purple), 0 0 20px var(--neon-purple), 0 0 40px #ff00ff;
+    margin-bottom: 30px; 
+    z-index: 20; /* パネルより手前に表示 */
+}
+
+/* 画面が狭い場合 (Mobile.css にもこの設定が必要) */
+@media screen and (max-width: 600px) {
+    #main-title {
+        font-size: 2.5em; /* スマホでは小さく */
+        margin-bottom: 20px;
+    }
+}
