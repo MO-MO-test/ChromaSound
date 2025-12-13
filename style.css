@@ -1,299 +1,363 @@
-/* ------------------------------------- */
-/* 1. 基本設定（サイバーパンク・ネオン風） */
-/* ------------------------------------- */
+/* =============================================== */
+/* 1. 全体設定 (Body, Background) */
+/* =============================================== */
+:root {
+    --glass-color: rgba(255, 255, 255, 0.1);
+    --neon-blue: #00e0ff;
+    --neon-purple: #ff00ff;
+    --neon-green: #00ff80;
+    --main-bg-color: #0d1a2c;
+    --wave-position: 0%; /* JSでアニメーション制御 */
+    --selected-color: var(--neon-blue); /* JSで選択された色が入る */
+}
+
+@font-face {
+    font-family: 'CyberFont';
+    src: url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+    /* 実際にはOrbitronをダウンロードして使用することを推奨 */
+}
+
 body {
-    background-color: #1a0a2e; /* フォールバックの色 */
-    
-    /* ★★★ 修正箇所：ファンタジー背景画像を設定 ★★★ */
-    background-image: url('fantasy-cyberpunk-narnia.png'); 
-    
-    background-size: cover;          /* 画面全体に画像を拡大/縮小して表示 */
-    background-position: center;     /* 画像を中央に配置 */
-    background-attachment: fixed;    /* スクロールしても背景を固定 */
-    
-    color: #e0e0e0; 
-    font-family: 'Roboto', sans-serif;
-    margin: 0;
-    padding: 30px;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    overflow-x: hidden;
-    position: relative;
-}
-
-/* 背景画像を少し暗くしてUIの視認性を高めるためのオーバーレイ (任意) */
-body::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.4); /* 透明度40%の黒 */
-    z-index: -1; /* bodyのコンテンツの下に配置 */
-}
-
-/* ネオンテキストエフェクト */
-.neon-text {
+    font-family: 'Orbitron', sans-serif;
     color: #fff;
-    text-shadow:
-        0 0 7px #fff,
-        0 0 10px #fff,
-        0 0 21px #fff,
-        0 0 42px #0fa, /* シアン */
-        0 0 82px #0fa,
-        0 0 92px #0fa,
-        0 0 102px #0fa,
-        0 0 151px #0fa;
-    text-align: center;
-    font-size: 3.5em; 
-    letter-spacing: 5px;
-    padding: 20px 0;
-    margin-bottom: 20px;
-}
-
-h2 {
-    color: #b0e0e6; /* 明るい水色 */
-    text-align: center;
-    margin-bottom: 25px;
-    font-weight: 700;
-}
-
-/* ------------------------------------- */
-/* 2. レイアウト設定（Flexbox/Grid & グラスモーフィズム） */
-/* ------------------------------------- */
-main {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
     display: flex;
-    gap: 25px; 
-    max-width: 1400px;
-    margin: 30px auto;
-    flex-grow: 1;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--main-bg-color);
+    overflow-x: hidden; /* ★修正点: 横スクロールを禁止 */
+    transition: background-color 0.5s;
+    background-image: url('background.jpg'); 
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
 }
 
-/* グラスモーフィズムパネル */
-.glass-panel {
-    background: rgba(255, 255, 255, 0.15); /* 透明度のある白 */
-    backdrop-filter: blur(10px); /* ぼかし */
-    -webkit-backdrop-filter: blur(10px); /* Safari対応 */
-    border: 1px solid rgba(255, 255, 255, 0.2); 
-    border-radius: 15px;
+/* =============================================== */
+/* 2. メインコンテナとガラスパネル */
+/* =============================================== */
+.container {
+    display: flex;
+    flex-direction: row; /* デスクトップでは横並び */
+    gap: 30px;
+    padding: 30px;
+    max-width: 1200px; /* 最大幅を制限 */
+    width: 90%; 
+    z-index: 10;
+}
+
+.panel {
+    background: var(--glass-color);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
     padding: 30px;
     flex: 1; 
+    min-width: 300px; /* ★修正点: パネルの最小幅設定 */
+    transition: all 0.3s ease-in-out;
+}
+
+.panel:hover {
+    box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.5);
+    transform: translateY(-2px);
+}
+
+h2 {
+    text-align: center;
+    color: #fff;
+    text-shadow: 0 0 5px var(--neon-blue), 0 0 10px var(--neon-blue);
+    margin-bottom: 25px;
+    font-size: 1.8em;
+}
+
+/* =============================================== */
+/* 3. ムード入力パネル (Mood Input) */
+/* =============================================== */
+#mood-input {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    position: relative;
-    overflow: hidden;
-}
-
-/* ------------------------------------- */
-/* 3. フォームとボタンのスタイル */
-/* ------------------------------------- */
-
-#keyword-input {
-    /* キーワード入力コンテナを中央に配置するための調整 */
-    text-align: center;
-}
-
-#keyword-input label {
-    display: block;
-    margin-bottom: 10px;
-    color: #c0f0f0; 
-    font-weight: 400;
-    font-size: 1.1em;
-}
-
-#keyword-input input {
-    /* ★修正点: 幅を親要素の90%にして、パディング内に収まるようにする & 中央寄せ★ */
-    width: 90%; 
-    max-width: 400px; 
-    
-    padding: 12px 15px;
-    margin-top: 5px;
-    margin-bottom: 25px;
-
-    border: 1px solid #0ff; 
-    border-radius: 8px;
-    background-color: rgba(0, 0, 0, 0.3); 
-    color: #e0e0e0;
-    font-size: 1.05em;
-    outline: none;
-    transition: border-color 0.3s, box-shadow 0.3s;
-    
-    display: block; 
-    margin-left: auto;
-    margin-right: auto;
-}
-#keyword-input input:focus {
-    border-color: #0fa; 
-    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5); 
-}
-
-
-/* アクションボタン（分析ボタンなど） */
-.action-button {
-    background: linear-gradient(45deg, #007bff, #00c6ff); 
-    color: white;
-    padding: 15px 30px;
-    border: none;
-    border-radius: 8px;
-    font-size: 1.1em;
-    cursor: pointer; 
-    transition: all 0.3s ease;
-    display: block;
-    width: fit-content;
-    margin: 30px auto 0;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    box-shadow: 0 4px 15px rgba(0, 198, 255, 0.4);
-}
-.action-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(0, 198, 255, 0.6);
-    background: linear-gradient(45deg, #00c6ff, #007bff);
-}
-
-/* 再生/一時停止ボタン */
-.play-pause-button {
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    background: linear-gradient(45deg, #ff00ff, #8a2be2); /* マゼンタから紫のグラデーション */
-    color: white;
-    font-size: 2.5em;
-    display: flex;
     align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    border: none;
-    box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
-    transition: all 0.3s ease;
-    margin: 0 auto 20px;
-}
-.play-pause-button:hover {
-    transform: scale(1.08);
-    box-shadow: 0 0 25px rgba(255, 0, 255, 0.8);
-    background: linear-gradient(45deg, #8a2be2, #ff00ff);
+    gap: 20px;
 }
 
-.icon-play, .icon-pause {
-    display: none;
-}
-.play-pause-button.playing .icon-pause {
-    display: block;
-}
-.play-pause-button:not(.playing) .icon-play {
-    display: block;
-}
-
-/* ------------------------------------- */
-/* 4. カラーホイールのスタイル */
-/* ------------------------------------- */
+/* --- カラーホイール --- */
 #color-wheel-container {
-    text-align: center;
-    margin-bottom: 30px;
-    position: relative;
     width: 200px;
     height: 200px;
-    margin: 0 auto 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border-radius: 50%;
+    margin-bottom: 15px;
+    position: relative;
+    border: 3px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.5s;
 }
 
 #color-wheel {
-    width: 180px;
-    height: 180px;
+    cursor: crosshair;
+    border-radius: 50%;
+    display: block;
+}
+
+/* 選択時のリングエフェクト */
+#color-wheel-container.selected::after {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    border-radius: 50%;
+    border: 3px solid var(--selected-color);
+    box-shadow: 0 0 15px var(--selected-color);
+    pointer-events: none;
+    transition: all 0.5s ease;
+}
+
+/* 再生中の脈動アニメーション */
+.is-playing-pulse::after {
+    animation: pulse 1.5s infinite alternate;
+}
+
+@keyframes pulse {
+    from {
+        box-shadow: 0 0 15px var(--selected-color), 0 0 5px var(--selected-color) inset;
+    }
+    to {
+        box-shadow: 0 0 30px var(--selected-color), 0 0 10px var(--selected-color) inset;
+    }
+}
+
+/* --- キーワード入力 --- */
+label {
+    align-self: flex-start;
+    font-size: 0.9em;
+    color: #ccc;
+}
+
+#keywords {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.3);
+    color: #fff;
+    font-size: 1em;
+    box-sizing: border-box;
+    font-family: 'Orbitron', sans-serif;
+    text-align: center; /* ★修正点: 入力文字を中央寄せ */
+}
+
+/* --- 分析ボタン --- */
+#analyze-button {
+    background: var(--neon-blue);
     border: none;
-    border-radius: 50%; 
-    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3), inset 0 0 10px rgba(0, 255, 255, 0.2); 
-    transition: box-shadow 0.3s, transform 0.3s;
+    color: var(--main-bg-color);
+    padding: 12px 25px;
+    border-radius: 8px;
     cursor: pointer;
-}
-#color-wheel:hover {
-    transform: scale(1.02);
-    box-shadow: 0 0 30px rgba(0, 255, 255, 0.6), inset 0 0 15px rgba(0, 255, 255, 0.4);
-}
-
-/* 選択された色での発光 */
-#color-wheel.selected {
-    border: 3px solid var(--selected-color, #0ff); 
-    box-shadow: 0 0 30px var(--selected-color, #0ff), inset 0 0 15px var(--selected-color, #0ff);
+    font-size: 1.1em;
+    font-weight: bold;
+    box-shadow: 0 0 15px var(--neon-blue);
+    transition: all 0.3s;
+    width: 100%; /* ★修正点: 幅を100%に */
+    margin-top: 10px;
 }
 
-/* ------------------------------------- */
-/* 5. 再生時アニメーションと波形コンテナのスタイル */
-/* ------------------------------------- */
-
-/* キーフレーム定義：カラーホイール脈動アニメーション */
-@keyframes wheelPulse {
-    0% {
-        transform: scale(1);
-        box-shadow: 0 0 20px rgba(0, 255, 255, 0.3), inset 0 0 10px rgba(0, 255, 255, 0.2);
-    }
-    50% {
-        transform: scale(1.1);
-        box-shadow: 0 0 40px rgba(255, 0, 255, 0.8), inset 0 0 20px rgba(255, 0, 255, 0.5);
-    }
-    100% {
-        transform: scale(1);
-        box-shadow: 0 0 20px rgba(0, 255, 255, 0.3), inset 0 0 10px rgba(0, 255, 255, 0.2);
-    }
+#analyze-button:hover {
+    background: #fff;
+    box-shadow: 0 0 20px var(--neon-blue);
+    transform: translateY(-1px);
 }
 
-/* JavaScriptで再生開始時にこのクラスをcolor-wheel-containerに適用します */
-#color-wheel-container.is-playing-pulse #color-wheel {
-    animation: wheelPulse 0.8s infinite alternate;
+/* =============================================== */
+/* 4. AI分析結果パネル */
+/* =============================================== */
+#mood-result {
+    margin-top: 10px;
+    line-height: 1.6;
+    font-size: 0.95em;
+    color: #e0e0e0;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+    height: 100%; /* ★修正点: 高さを確保 */
 }
 
-/* オーディオ波形コンテナ */
+/* =============================================== */
+/* 5. 再生パネル (Player Controls) */
+/* =============================================== */
+.player-controls {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#track-title {
+    font-size: 1.1em;
+    color: var(--neon-green);
+    text-shadow: 0 0 5px var(--neon-green);
+    margin-bottom: 20px;
+}
+
+/* --- 再生ボタン --- */
+#play-button {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 3px solid var(--neon-purple);
+    margin: 30px auto;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s;
+    box-shadow: 0 0 15px var(--neon-purple);
+}
+
+#play-button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-35%, -50%);
+    width: 0;
+    height: 0;
+    border-top: 15px solid transparent;
+    border-bottom: 15px solid transparent;
+    border-left: 25px solid var(--neon-purple);
+    transition: all 0.3s;
+}
+
+/* 一時停止ボタン (再生中) */
+#play-button.playing::before {
+    transform: translate(-50%, -50%);
+    width: 15px;
+    height: 30px;
+    border: none;
+    border-left: 10px solid var(--neon-purple);
+    border-right: 10px solid var(--neon-purple);
+    background: none;
+}
+
+#play-button:hover {
+    transform: scale(1.05);
+}
+
+/* --- オーディオウェーブアニメーション --- */
 .audio-wave-container {
     width: 100%;
-    height: 80px;
-    margin-top: auto;
-    position: relative;
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 8px;
+    height: 30px;
+    border-radius: 15px;
+    background: rgba(0, 0, 0, 0.3);
+    margin-top: 20px;
     overflow: hidden;
-    border: 1px solid #0ff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
 }
-
-/* リアルタイム波形用のCanvasは、中身を使わないので透明に */
-#audio-wave-canvas {
-    width: 100%;
-    height: 100%;
-    display: block;
-    opacity: 0; 
-}
-
-/* --- 【最終的なデザインの肝】静的グラデーションの波形表現 --- */
-/* JSからCSS変数（--wave-position）で背景位置を直接制御する */
 
 .audio-wave-container::before {
-    content: "";
+    content: '';
     position: absolute;
-    top: 50%; /* 中央に配置 */
+    top: 0;
     left: 0;
-    right: 0;
-    height: 10px; /* 線の太さ */
-    transform: translateY(-50%);
-    
-    /* 波のように見えるグラデーションパターン */
+    width: 200%; /* アニメーションのために幅を広げる */
+    height: 100%;
+    /* 波形グラデーションを定義 */
     background: repeating-linear-gradient(
         45deg,
-        #0ff,        /* シアン */
-        #0ff 5px,
-        rgba(0, 255, 255, 0.2) 5px, /* 透明なシアン */
-        rgba(0, 255, 255, 0.2) 10px
+        var(--neon-blue),
+        var(--neon-blue) 3px,
+        transparent 3px,
+        transparent 6px
     );
-    background-size: 200% 10px; 
-    box-shadow: 0 0 5px rgba(0, 255, 255, 0.8); /* ネオン発光 */
-    
-    /* ★修正点: JSから渡されるCSS変数を利用して背景位置を決定する★ */
-    background-position: var(--wave-position, 0%) 0;
-    
-    animation: none; 
+    background-size: 20px 20px;
+    opacity: 0.5;
+    transform: translateX(var(--wave-position)); /* JSで制御 */
+    transition: opacity 0.3s;
 }
 
+/* 再生中は波形をネオンカラーに */
+.player-controls.is-playing .audio-wave-container::before {
+    opacity: 1;
+    background: repeating-linear-gradient(
+        45deg,
+        var(--selected-color),
+        var(--selected-color) 3px,
+        transparent 3px,
+        transparent 6px
+    );
+    box-shadow: 0 0 10px var(--selected-color);
+}
+
+/* オーディオタグは非表示 */
+#audio-player-element {
+    display: none;
+}
+
+/* =============================================== */
+/* 6. レスポンシブ対応 (スマートフォン/タブレット) */
+/* =============================================== */
+@media screen and (max-width: 900px) {
+    .container {
+        flex-direction: column; /* 画面幅が900px以下で縦並び */
+        padding: 20px;
+        gap: 20px;
+        width: 95%;
+    }
+
+    .panel {
+        min-width: unset; /* 最小幅の制限を解除 */
+    }
+
+    h2 {
+        font-size: 1.6em; /* タイトルを少し小さく */
+    }
+
+    /* カラーホイールを少し小さく */
+    #color-wheel-container {
+        width: 180px;
+        height: 180px;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    /* スマートフォン向け */
+    h2 {
+        font-size: 1.4em;
+    }
+
+    .panel {
+        padding: 20px;
+    }
+
+    #keywords {
+        font-size: 0.9em;
+        padding: 10px;
+    }
+    
+    #analyze-button {
+        font-size: 1em;
+        padding: 10px 20px;
+    }
+
+    /* 再生ボタンをさらに小さく */
+    #play-button {
+        width: 60px;
+        height: 60px;
+        margin: 20px auto;
+    }
+    
+    #play-button::before {
+        border-top: 10px solid transparent;
+        border-bottom: 10px solid transparent;
+        border-left: 18px solid var(--neon-purple);
+    }
+    
+    #play-button.playing::before {
+        width: 10px;
+        height: 20px;
+        border-left: 8px solid var(--neon-purple);
+        border-right: 8px solid var(--neon-purple);
+    }
+}
