@@ -3,62 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChromaSound | 色とムードの音楽生成</title>
+    <title>ChromaSound AI Mood Generator</title>
+
+    <link rel="stylesheet" href="style-pc.css">
     
-    <link rel="stylesheet" href="style.css?v=github_final_007"> 
-    
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style-mobile.css" media="screen and (max-width: 900px)">
+
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header>
-        <h1 class="neon-text">ChromaSound</h1>
-    </header>
-
-    <main>
-        
-        <section id="control-panel" class="glass-panel">
+    <div class="container">
+        <div id="mood-input" class="panel">
             <h2>ムードの入力</h2>
-            
             <div id="color-wheel-container">
-                <canvas id="color-wheel"></canvas>
+                <canvas id="color-wheel" width="200" height="200"></canvas>
             </div>
             
-            <div id="keyword-input">
-                <label for="keywords">📚 キーワードを入力:</label>
-                <input type="text" id="keywords" placeholder="例: コーヒー、雨、勉強 集中">
-            </div>
+            <label for="keywords">キーワードを入力:</label>
+            <input type="text" id="keywords" placeholder="例: コーヒー, 雨, 勉強, 集中">
             
-            <button id="analyze-button" class="action-button">ムードを分析する</button>
-        </section>
+            <button id="analyze-button">ムードを分析する</button>
+        </div>
 
-        
-        <section id="output-display" class="glass-panel">
+        <div id="ai-result" class="panel">
             <h2>AI分析結果</h2>
-            <p id="mood-result">色とキーワードからムードを導き出します。</p>
-        </section>
+            <div id="mood-result">
+                色とキーワードからムードを導き出します。
+            </div>
+        </div>
 
-        
-        <section id="playback-area" class="glass-panel">
+        <div id="player-controls" class="panel player-controls">
             <h2>再生</h2>
             <p id="track-title">曲名: [提案された曲名]</p>
+            <audio id="audio-player-element" src="" preload="auto"></audio>
             
-            <div class="player-controls">
-                
-                <button id="play-button" class="play-pause-button">
-                    <span class="icon-play">▶</span>
-                    <span class="icon-pause">◼</span>
-                </button>
-                
-                <audio id="audio-player-element" muted></audio> 
-            </div>
+            <button id="play-button" data-track-url=""></button>
             
             <div class="audio-wave-container">
-                <canvas id="audio-wave-canvas"></canvas>
-            </div>
-        </section>
-    </main>
+                </div>
+        </div>
+    </div>
 
-    
     <script src="script.js"></script>
 </body>
 </html>
