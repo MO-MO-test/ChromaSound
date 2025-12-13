@@ -1,0 +1,238 @@
+/* ------------------------------------- */
+/* 1. 基本設定（サイバーパンク・ネオン風） */
+/* ------------------------------------- */
+body {
+    background-color: #1a0a2e; /* ダークで深い紫 */
+    /* 背景画像/ノイズ関連の記述はすべて削除済み */
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: #e0e0e0; 
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* ネオンテキストエフェクト (アニメーションなしの安定発光) */
+.neon-text {
+    color: #fff;
+    text-shadow:
+        0 0 7px #fff,
+        0 0 10px #fff,
+        0 0 21px #fff,
+        0 0 42px #0fa, /* シアン */
+        0 0 82px #0fa,
+        0 0 92px #0fa,
+        0 0 102px #0fa,
+        0 0 151px #0fa;
+    text-align: center;
+    font-size: 3.5em; 
+    letter-spacing: 5px;
+    padding: 20px 0;
+    margin-bottom: 20px;
+}
+
+h2 {
+    color: #b0e0e6; /* 明るい水色 */
+    text-align: center;
+    margin-bottom: 25px;
+    font-weight: 700;
+}
+
+/* ------------------------------------- */
+/* 2. レイアウト設定（Flexbox/Grid & グラスモーフィズム） */
+/* ------------------------------------- */
+main {
+    display: flex;
+    gap: 25px; 
+    max-width: 1400px;
+    margin: 30px auto;
+    flex-grow: 1;
+}
+
+/* グラスモーフィズムパネル */
+.glass-panel {
+    background: rgba(255, 255, 255, 0.15); /* 透明度のある白 */
+    backdrop-filter: blur(10px); /* ぼかし */
+    -webkit-backdrop-filter: blur(10px); /* Safari対応 */
+    border: 1px solid rgba(255, 255, 255, 0.2); 
+    border-radius: 15px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    padding: 30px;
+    flex: 1; 
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+}
+
+/* ------------------------------------- */
+/* 3. フォームとボタンのスタイル */
+/* ------------------------------------- */
+
+#keyword-input label {
+    display: block;
+    margin-bottom: 10px;
+    color: #c0f0f0; 
+    font-weight: 400;
+    font-size: 1.1em;
+}
+
+#keyword-input input {
+    width: 100%;
+    padding: 12px 15px;
+    margin-top: 5px;
+    margin-bottom: 25px;
+    border: 1px solid #0ff; /* シアンの境界線 */
+    border-radius: 8px;
+    background-color: rgba(0, 0, 0, 0.3); 
+    color: #e0e0e0;
+    font-size: 1.05em;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+#keyword-input input:focus {
+    border-color: #0fa; 
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5); 
+}
+
+
+/* アクションボタン（分析ボタンなど） */
+.action-button {
+    background: linear-gradient(45deg, #007bff, #00c6ff); 
+    color: white;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    cursor: pointer; 
+    transition: all 0.3s ease;
+    display: block;
+    width: fit-content;
+    margin: 30px auto 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(0, 198, 255, 0.4);
+}
+.action-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 198, 255, 0.6);
+    background: linear-gradient(45deg, #00c6ff, #007bff);
+}
+
+/* 再生/一時停止ボタン */
+.play-pause-button {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #ff00ff, #8a2be2); /* マゼンタから紫のグラデーション */
+    color: white;
+    font-size: 2.5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
+    transition: all 0.3s ease;
+    margin: 0 auto 20px;
+}
+.play-pause-button:hover {
+    transform: scale(1.08);
+    box-shadow: 0 0 25px rgba(255, 0, 255, 0.8);
+    background: linear-gradient(45deg, #8a2be2, #ff00ff);
+}
+
+.icon-play, .icon-pause {
+    display: none;
+}
+.play-pause-button.playing .icon-pause {
+    display: block;
+}
+.play-pause-button:not(.playing) .icon-play {
+    display: block;
+}
+
+/* ------------------------------------- */
+/* 4. カラーホイールのスタイル */
+/* ------------------------------------- */
+#color-wheel-container {
+    text-align: center;
+    margin-bottom: 30px;
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 0 auto 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#color-wheel {
+    width: 180px;
+    height: 180px;
+    border: none;
+    border-radius: 50%; 
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3), inset 0 0 10px rgba(0, 255, 255, 0.2); 
+    transition: box-shadow 0.3s, transform 0.3s;
+    cursor: pointer;
+}
+#color-wheel:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.6), inset 0 0 15px rgba(0, 255, 255, 0.4);
+}
+
+/* 選択された色での発光 */
+#color-wheel.selected {
+    border: 3px solid var(--selected-color, #0ff); 
+    box-shadow: 0 0 30px var(--selected-color, #0ff), inset 0 0 15px var(--selected-color, #0ff);
+}
+
+/* ------------------------------------- */
+/* 5. 再生時アニメーション用CSS (カラーホイール脈動と波形) */
+/* ------------------------------------- */
+
+/* キーフレーム定義：カラーホイールがわずかに拡大縮小し、発光するアニメーション */
+@keyframes wheelPulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.3), inset 0 0 10px rgba(0, 255, 255, 0.2);
+    }
+    50% {
+        transform: scale(1.1);
+        box-shadow: 0 0 40px rgba(255, 0, 255, 0.8), inset 0 0 20px rgba(255, 0, 255, 0.5);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.3), inset 0 0 10px rgba(0, 255, 255, 0.2);
+    }
+}
+
+/* JavaScriptで再生開始時にこのクラスをcolor-wheel-containerに適用します */
+#color-wheel-container.is-playing-pulse #color-wheel {
+    animation: wheelPulse 0.8s infinite alternate;
+}
+
+/* オーディオ波形コンテナ */
+.audio-wave-container {
+    width: 100%;
+    height: 80px;
+    margin-top: auto;
+    position: relative;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #0ff;
+}
+
+#audio-wave-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
