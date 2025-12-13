@@ -8,7 +8,7 @@
 }
 
 body {
-    /* ★修正点: Flexboxを削除し、テキストとコンテナを中央寄せ */
+    /* Flexboxを削除し、テキストとコンテナを中央寄せ */
     text-align: center; 
     padding-top: 20px; 
     
@@ -19,10 +19,10 @@ body {
 }
 
 /* =============================================== */
-/* 7. メインタイトル (復活) */
+/* 7. メインタイトル */
 /* =============================================== */
 #main-title {
-    font-size: 3em; /* モバイルでは少し小さく */
+    font-size: 3em; 
     font-weight: 700;
     text-align: center;
     color: #fff;
@@ -46,7 +46,6 @@ body {
     gap: 20px;
     padding: 20px;
     width: 95%;
-    /* margin: 0 auto; で中央寄せ */
     margin: 0 auto 20px auto; 
     text-align: left; /* コンテナ内の文字は左寄せに戻す */
 }
