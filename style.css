@@ -2,10 +2,16 @@
 /* 1. 基本設定（サイバーパンク・ネオン風） */
 /* ------------------------------------- */
 body {
-    background-color: #1a0a2e; /* ダークで深い紫 */
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
+    background-color: #1a0a2e; /* フォールバックの色 */
+    
+    /* ★★★ 修正箇所：ファンタジー背景画像を設定 ★★★ */
+    /* 画像のパスは、GitHubの 'images/fantasy-cyberpunk-narnia.png' に合わせています */
+    background-image: url('images/fantasy-cyberpunk-narnia.png'); 
+    
+    background-size: cover;          /* 画面全体に画像を拡大/縮小して表示 */
+    background-position: center;     /* 画像を中央に配置 */
+    background-attachment: fixed;    /* スクロールしても背景を固定 */
+    
     color: #e0e0e0; 
     font-family: 'Roboto', sans-serif;
     margin: 0;
@@ -15,6 +21,18 @@ body {
     min-height: 100vh;
     overflow-x: hidden;
     position: relative;
+}
+
+/* 背景画像を少し暗くしてUIの視認性を高めるためのオーバーレイ (任意) */
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4); /* 透明度40%の黒 */
+    z-index: -1; /* bodyのコンテンツの下に配置 */
 }
 
 /* ネオンテキストエフェクト */
@@ -89,9 +107,9 @@ main {
 }
 
 #keyword-input input {
-    /* ★修正点: 幅を親要素の90%にして、パディング内に収まるようにする★ */
+    /* ★修正点: 幅を親要素の90%にして、パディング内に収まるようにする & 中央寄せ★ */
     width: 90%; 
-    max-width: 400px; /* 必要に応じて最大幅を設定 */
+    max-width: 400px; 
     
     padding: 12px 15px;
     margin-top: 5px;
@@ -105,7 +123,6 @@ main {
     outline: none;
     transition: border-color 0.3s, box-shadow 0.3s;
     
-    /* ★追加: 中央寄せのためにブロック要素として設定★ */
     display: block; 
     margin-left: auto;
     margin-right: auto;
@@ -278,6 +295,5 @@ main {
     /* ★修正点: JSから渡されるCSS変数を利用して背景位置を決定する★ */
     background-position: var(--wave-position, 0%) 0;
     
-    /* CSSアニメーションは全て削除済み */
     animation: none; 
 }
