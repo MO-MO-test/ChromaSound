@@ -1,0 +1,76 @@
+/* style-mobile.css - スマートフォン（900px以下）での縦積み表示専用 */
+
+/* =============================================== */
+/* 1. 全体設定 (Mobile/Smartphone Base) */
+/* =============================================== */
+body {
+    /* 縦積み時は上からコンテンツを配置 */
+    align-items: flex-start !important; 
+    padding-top: 20px;
+}
+
+/* =============================================== */
+/* 2. メインコンテナとパネル */
+/* =============================================== */
+.container {
+    flex-direction: column !important; /* 縦積み表示を強制 */
+    gap: 20px;
+    padding: 20px;
+    width: 95%;
+    margin: 20px auto; 
+}
+
+.panel {
+    padding: 20px;
+    min-width: unset;
+}
+
+h2 {
+    font-size: 1.4em;
+}
+
+/* =============================================== */
+/* 3. 要素のサイズ調整 */
+/* =============================================== */
+
+/* カラーホイールを小さく */
+#color-wheel-container {
+    width: 180px;
+    height: 180px;
+}
+
+/* 入力欄とボタンの調整 */
+#keywords {
+    font-size: 0.9em;
+    padding: 10px;
+}
+
+#analyze-button {
+    font-size: 1em;
+    padding: 10px 20px;
+}
+
+/* 再生ボタンを小さく */
+#play-button {
+    width: 60px;
+    height: 60px;
+    margin: 20px auto;
+}
+
+#play-button::before {
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 18px solid var(--neon-purple);
+}
+
+#play-button.playing::before {
+    width: 10px;
+    height: 20px;
+    border-left: 8px solid var(--neon-purple);
+    border-right: 8px solid var(--neon-purple);
+}
+
+/* 分析結果の文字サイズを調整 */
+#mood-result {
+    font-size: 0.9em;
+}
