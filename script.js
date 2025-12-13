@@ -32,13 +32,23 @@ const radius = size / 2;
 // 2. 音楽データリスト（外部URL版）
 // ===============================================
 const musicDatabase = [
-    // 外部URLを使用します。
-    { title: "Quiet Raindrops (Ambient)", mood: ["calm", "rain", "piano", "slow", "ambient", "healing", "winter"], genre: "Ambient/Piano", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
-    { title: "Summer Day Pop (Upbeat)", mood: ["bright", "sun", "upbeat", "pop", "energetic", "summer", "sport"], genre: "Pop", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
-    { title: "Midnight Coffee Jazz (Bossa)", mood: ["relaxed", "coffee", "sophisticated", "slow", "jazz", "bossa nova", "work", "autumn"], genre: "Jazz/Bossa Nova", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" },
-    { title: "Neon Future Beat (Electro)", mood: ["high-tempo", "energetic", "synth", "powerful", "rock", "electro", "drive", "sci-fi"], genre: "Electro/KPOP", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" },
-    { title: "Zen Garden Flute (Healing)", mood: ["peace", "quiet", "instrumental", "refreshing", "slow", "spring", "healing"], genre: "Healing/Instrumental", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3" },
-    { title: "Heavy Metal Night (Rock)", mood: ["heavy", "serious", "powerful", "rock", "metal", "winter", "battle"], genre: "Rock/Metal", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3" }
+    // 1. 静かで癒やし系（数学、内省、静寂）
+    { title: "Quiet Raindrops (Ambient)", mood: ["calm", "rain", "piano", "slow", "ambient", "healing", "winter", "study", "logic", "abstract", "内省"], genre: "Ambient/Piano", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
+    
+    // 2. 明るいポップ（アップビート、元気）
+    { title: "Summer Day Pop (Upbeat)", mood: ["bright", "sun", "upbeat", "pop", "energetic", "summer", "sport", "drive", "happy"], genre: "Pop", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
+    
+    // 3. ジャズ/ボサノバ（集中、コーヒー、知的なリラックス）
+    { title: "Midnight Coffee Jazz (Bossa)", mood: ["relaxed", "coffee", "sophisticated", "slow", "jazz", "bossa nova", "work", "autumn", "focus", "intellectual"], genre: "Jazz/Bossa Nova", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" },
+    
+    // 4. エレクトロ/KPOP（SF、サイバー、高揚感）
+    { title: "Neon Future Beat (Electro)", mood: ["high-tempo", "energetic", "synth", "powerful", "rock", "electro", "drive", "sci-fi", "cyber", "future"], genre: "Electro/KPOP", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" },
+    
+    // 5. ヒーリング（平和、安らぎ、夢）
+    { title: "Zen Garden Flute (Healing)", mood: ["peace", "quiet", "instrumental", "refreshing", "slow", "spring", "healing", "dream", "fantasy"], genre: "Healing/Instrumental", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3" },
+    
+    // 6. メタル/ロック（戦闘、アクション、重厚感）
+    { title: "Heavy Metal Night (Rock)", mood: ["heavy", "serious", "powerful", "rock", "metal", "winter", "battle", "action", "fps"], genre: "Rock/Metal", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3" }
 ];
 
 
@@ -401,3 +411,4 @@ audioPlayer.addEventListener('ended', () => {
     
     stopWaveAnimation(); // アニメーション停止！
 });
+
