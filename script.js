@@ -29,17 +29,22 @@ const center = size / 2;
 const radius = size / 2;
 
 // ===============================================
-// 2. 音楽データリスト（外部URL版 - キーワード強化済み）
+// 2. 音楽データリスト（最終調整版）
 // ===============================================
 const musicDatabase = [
-    // 1. 静かで癒やし系（数学、内省、静寂）
-    { title: "Quiet Raindrops (Ambient)", mood: ["calm", "rain", "piano", "slow", "ambient", "healing", "winter", "study", "logic", "abstract", "内省"], genre: "Ambient/Piano", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
+    // 1. 静かで癒やし系（内省、静寂、集中、勉強）
+    { 
+        title: "Quiet Raindrops (Ambient)", 
+        mood: ["calm", "rain", "slow", "ambient", "healing", "winter", "study", "logic", "abstract", "内省", "静寂", "集中", "瞑想"], 
+        genre: "Ambient/Piano", 
+        url: "https://dl.vgm-db.com/sample/8586/mp3/01-11585257-2.mp3" // アコースティックピアノ音源
+    }, 
     
     // 2. 明るいポップ（アップビート、元気）
     { title: "Summer Day Pop (Upbeat)", mood: ["bright", "sun", "upbeat", "pop", "energetic", "summer", "sport", "drive", "happy"], genre: "Pop", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
     
     // 3. ジャズ/ボサノバ（集中、コーヒー、知的なリラックス）
-    { title: "Midnight Coffee Jazz (Bossa)", mood: ["relaxed", "coffee", "sophisticated", "slow", "jazz", "bossa nova", "work", "autumn", "focus", "intellectual"], genre: "Jazz/Bossa Nova", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" },
+    { title: "Midnight Coffee Jazz (Bossa)", mood: ["relaxed", "coffee", "sophisticated", "slow", "jazz", "bossa nova", "work", "autumn", "focus", "intellectual"], genre: "Jazz/Bossa Nova", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" }, 
     
     // 4. エレクトロ/KPOP（SF、サイバー、高揚感）
     { title: "Neon Future Beat (Electro)", mood: ["high-tempo", "energetic", "synth", "powerful", "rock", "electro", "drive", "sci-fi", "cyber", "future"], genre: "Electro/KPOP", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" },
@@ -114,7 +119,7 @@ function analyzeMood(hslData, keywords) {
 
     let influenceList = [];
     
-    // キーワードをすべて小文字に変換 (日英対応はここで処理)
+    // キーワードをすべて小文字に変換
     const keywordArray = keywords.toLowerCase().split(/[, ]+/).filter(k => k.length > 0);
 
     keywordArray.forEach(kw => {
@@ -143,7 +148,7 @@ function analyzeMood(hslData, keywords) {
             influenceList.push('major chord progression and light percussion');
         } 
         // ★★★ 環境キーワード ★★★
-        else if (['rain', 'cafe', '雨', 'カフェ'].includes(kw)) {
+        else if (['rain', 'cafe', '雨', 'カフェ', 'coffee'].includes(kw)) { // coffeeを追加
             influenceList.push('smooth piano tones and reverb, jazz/bossa nova elements');
         } else if (['sun', 'summer', '太陽', '夏'].includes(kw)) {
             influenceList.push('open-air atmosphere and upbeat tempo');
@@ -184,17 +189,25 @@ function analyzeMood(hslData, keywords) {
         keywordInfluence = `with features like: ${influenceList.join(', ')}`;
     }
 
-    let primaryGenre = 'Instrumental';
+    let primaryGenre = 'Instrumental'; 
+
+    // 1. キーワードによる決定 (最優先)
     if (keywordArray.includes('pop') || keywordArray.includes('kpop')) {
         primaryGenre = 'Pop/KPOP';
     } else if (keywordArray.includes('jazz') || keywordArray.includes('bossa')) {
-        primaryGenre = 'Jazz/Bossa Nova';
-    } else if (h >= 330 || h < 30 || keywordArray.includes('rock')) { 
-        primaryGenre = 'Rock or Electro';
-    } else if (h >= 210 && h < 270 || keywordArray.includes('ambient')) { 
-        primaryGenre = 'Ambient or Classical';
+        primaryGenre = 'Jazz/Bossa Nova'; 
     } else if (keywordArray.includes('rpg') || keywordArray.includes('fantasy') || keywordArray.includes('ファンタジー')) {
         primaryGenre = 'Cinematic/Orchestral';
+    } 
+    
+    // 2. キーワードがなければ色相で大まかに決定
+    else {
+        const h = hslData.h;
+        if (h >= 330 || h < 30 || keywordArray.includes('rock')) { 
+             primaryGenre = 'Rock or Electro'; 
+        } else if (h >= 210 && h < 270 || keywordArray.includes('ambient')) { 
+            primaryGenre = 'Ambient or Classical';
+        }
     }
     
     return `Based on color and keywords, we propose a ${energySL} ${moodH} track ${keywordInfluence}. Suggested Genre: ${primaryGenre}.`;
@@ -241,7 +254,7 @@ function searchTrack(moodDescription, hslData) {
         }
     });
 
-    // 最低マッチング点数の閾値（8点）を設定し、どの曲も選ばれやすくする
+    // 最低マッチング点数の閾値（8点）を設定
     if (highestScore < 8 || !bestMatch) { 
         console.log("Fallback processing: Suggesting track based on hue (Score too low: " + highestScore + ")");
 
@@ -254,7 +267,6 @@ function searchTrack(moodDescription, hslData) {
         else if (h >= 210 && h < 270) { fallbackMood = 'calm'; }
         else { fallbackMood = 'mysterious'; }
 
-        // トラックDBのmood配列は英語なので、これで比較する
         return musicDatabase.find(track => track.mood.includes(fallbackMood)) || musicDatabase[0];
     }
     
@@ -263,7 +275,7 @@ function searchTrack(moodDescription, hslData) {
 
 
 // ===============================================
-// 7. イベントリスナー（色選択）
+// 7. イベントリスナー（色選択） 
 // ===============================================
 colorWheelCanvas.addEventListener('click', (event) => {
     const rect = colorWheelCanvas.getBoundingClientRect();
@@ -288,7 +300,7 @@ colorWheelCanvas.addEventListener('click', (event) => {
 
 
 // ===============================================
-// 8. イベントリスナー（ムード分析）
+// 8. イベントリスナー（ムード分析） 
 // ===============================================
 analyzeButton.addEventListener('click', () => {
     if (selectedHsl.h === 0 && selectedHsl.s === 0 && selectedHsl.l === 0) {
@@ -304,7 +316,6 @@ analyzeButton.addEventListener('click', () => {
 
     const trackMoodTags = suggestedTrack.mood.join(', ');
     
-    // 出力メッセージは英語
     const finalMoodDisplay = `Based on color and keywords, we propose a track with the following elements: ${trackMoodTags} (${suggestedTrack.genre}). ${musicMoodDescription}`;
 
     moodResultDisplay.textContent = finalMoodDisplay;
@@ -319,10 +330,9 @@ analyzeButton.addEventListener('click', () => {
 
 
 // ===============================================
-// 9. イベントリスナー（再生ボタン）
+// 9. イベントリスナー（再生ボタン） 
 // ===============================================
 
-// ★★★ JSアニメーションロジック（右から左へ） ★★★
 let backgroundPositionX = 0;
 let waveSpeed = 0.5; 
 const maxOffset = 100; 
@@ -331,19 +341,26 @@ function startWaveAnimation() {
     if (animationInterval) {
         clearInterval(animationInterval); 
     }
-    backgroundPositionX = 100; 
-    waveSpeed = -0.5; 
+    
+    // ★修正点: 初期位置を左端 (0) に設定
+    backgroundPositionX = 0; 
+    
+    // ★修正点: 速度を正の数に設定し、左から右へ流れるようにする
+    waveSpeed = 0.5; 
 
     animationInterval = setInterval(() => {
         backgroundPositionX += waveSpeed;
-        if (backgroundPositionX <= 0) {
-            backgroundPositionX = maxOffset; 
+        
+        // 右端 (maxOffset) に達したら、左端 (0) に戻る
+        if (backgroundPositionX >= maxOffset) { 
+            backgroundPositionX = 0; 
         }
+        
         if (waveContainer) {
             waveContainer.style.setProperty('--wave-position', `${backgroundPositionX}%`);
         }
     }, 50); 
-    console.log("Wave animation started (Right to Left).");
+    console.log("Wave animation started (Left to Right).");
 }
 
 function stopWaveAnimation() {
