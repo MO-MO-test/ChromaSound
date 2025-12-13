@@ -3,10 +3,20 @@
 /* =============================================== */
 /* 1. 全体設定 (Mobile/Smartphone Base) */
 /* =============================================== */
+:root {
+    /* ★修正点: ガラスの透過度を黒寄りで透過率を上げる (暗くする) */
+    --glass-color: rgba(0, 0, 0, 0.4); 
+}
+
 body {
     /* 縦積み時は上からコンテンツを配置 */
     align-items: flex-start !important; 
     padding-top: 20px;
+    /* ★修正点: モバイルでも背景画像を読み込む */
+    background-image: url('fantasy-cyberpunk-narnia.png'); 
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
 }
 
 /* =============================================== */
@@ -21,12 +31,15 @@ body {
 }
 
 .panel {
+    background: var(--glass-color); /* 透過度を継承 */
     padding: 20px;
     min-width: unset;
 }
 
 h2 {
     font-size: 1.4em;
+    /* ★修正点: 文字の影を強化し視認性を向上 */
+    text-shadow: 0 0 8px var(--neon-blue), 0 0 15px var(--neon-blue);
 }
 
 /* =============================================== */
@@ -50,6 +63,13 @@ h2 {
     padding: 10px 20px;
 }
 
+/* AI分析結果 */
+#mood-result {
+    font-size: 0.9em;
+    /* ★修正点: 文字の影を強化し視認性を向上 */
+    text-shadow: 0 0 3px rgba(0, 0, 0, 0.9);
+}
+
 /* 再生ボタンを小さく */
 #play-button {
     width: 60px;
@@ -68,9 +88,4 @@ h2 {
     height: 20px;
     border-left: 8px solid var(--neon-purple);
     border-right: 8px solid var(--neon-purple);
-}
-
-/* 分析結果の文字サイズを調整 */
-#mood-result {
-    font-size: 0.9em;
 }
