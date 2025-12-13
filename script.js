@@ -29,7 +29,7 @@ const center = size / 2;
 const radius = size / 2;
 
 // ===============================================
-// 2. 音楽データリスト（外部URL版）
+// 2. 音楽データリスト（外部URL版 - キーワード強化済み）
 // ===============================================
 const musicDatabase = [
     // 1. 静かで癒やし系（数学、内省、静寂）
@@ -53,7 +53,7 @@ const musicDatabase = [
 
 
 // ===============================================
-// 3-6. 描画・変換・分析・検索ロジック (日英対応＆拡張キーワード)
+// 3-6. 描画・変換・分析・検索ロジック 
 // ===============================================
 function drawColorWheel() {
     const gradient = ctx.createConicGradient(0, center, center);
@@ -114,7 +114,7 @@ function analyzeMood(hslData, keywords) {
 
     let influenceList = [];
     
-    // キーワードをすべて小文字に変換し、スペース/コンマで区切る
+    // キーワードをすべて小文字に変換 (日英対応はここで処理)
     const keywordArray = keywords.toLowerCase().split(/[, ]+/).filter(k => k.length > 0);
 
     keywordArray.forEach(kw => {
@@ -151,7 +151,7 @@ function analyzeMood(hslData, keywords) {
         
         /* ★★★ 拡張キーワード: ゲーム・ファンタジー ★★★ */
         else if (['rpg', 'fantasy', 'medieval', 'rpg', 'ファンタジー', '中世'].includes(kw)) {
-            influenceList.push('orchestral sounds and epic melodies, epic/cinematic feel');
+            influenceList.push('orchestral sounds and epic melodies, cinematic feel');
         } else if (['sci-fi', 'cyber', 'future', 'sf', 'サイバー', '未来'].includes(kw)) {
             influenceList.push('heavy synth bass and electronic textures, futuristic beat');
         } else if (['fps', 'battle', 'action', '戦闘', 'アクション', 'バトル'].includes(kw)) {
@@ -202,6 +202,7 @@ function analyzeMood(hslData, keywords) {
 
 
 function searchTrack(moodDescription, hslData) { 
+    // スコアリングの対象とするキーワードリストを作成
     const searchTerms = moodDescription.toLowerCase().split(/[, ]+/).filter(t => t.length > 2);
 
     let bestMatch = null;
@@ -212,10 +213,27 @@ function searchTrack(moodDescription, hslData) {
         const trackKeywords = (track.title + ' ' + track.genre + ' ' + track.mood.join(' ')).toLowerCase();
         
         searchTerms.forEach(term => {
+            // キーワードの一部が含まれていれば点数を加算（文字数に応じて重み付け）
             if (trackKeywords.includes(term)) {
-                score++;
+                score += term.length; 
             }
         });
+
+        // HSLの「色相(H)」に基づき、トラックのムードに一致する場合、ボーナス点を加算
+        const h = hslData.h;
+        if (h >= 330 || h < 30) { 
+            if (track.mood.includes('passionate') || track.mood.includes('rock') || track.mood.includes('heavy')) score += 5;
+        }
+        else if (h >= 30 && h < 90) { 
+            if (track.mood.includes('bright') || track.mood.includes('joyful') || track.mood.includes('summer')) score += 5;
+        }
+        else if (h >= 210 && h < 270) { 
+            if (track.mood.includes('calm') || track.mood.includes('quiet') || track.mood.includes('study')) score += 5;
+        }
+        // ジャズ向け: 温かみのある色相（オレンジ系）に強めのボーナス
+        else if (h >= 15 && h < 60) {
+            if (track.mood.includes('relaxed') || track.mood.includes('coffee') || track.mood.includes('jazz')) score += 8; 
+        }
 
         if (score > highestScore) {
             highestScore = score;
@@ -223,8 +241,9 @@ function searchTrack(moodDescription, hslData) {
         }
     });
 
-    if (highestScore <= 1 || !bestMatch) { 
-        console.log("Fallback processing: Suggesting track based on hue.");
+    // 最低マッチング点数の閾値（8点）を設定し、どの曲も選ばれやすくする
+    if (highestScore < 8 || !bestMatch) { 
+        console.log("Fallback processing: Suggesting track based on hue (Score too low: " + highestScore + ")");
 
         let fallbackMood = '';
         const h = hslData.h;
@@ -235,6 +254,7 @@ function searchTrack(moodDescription, hslData) {
         else if (h >= 210 && h < 270) { fallbackMood = 'calm'; }
         else { fallbackMood = 'mysterious'; }
 
+        // トラックDBのmood配列は英語なので、これで比較する
         return musicDatabase.find(track => track.mood.includes(fallbackMood)) || musicDatabase[0];
     }
     
@@ -283,6 +303,8 @@ analyzeButton.addEventListener('click', () => {
     const suggestedTrack = searchTrack(musicMoodDescription, colorData);
 
     const trackMoodTags = suggestedTrack.mood.join(', ');
+    
+    // 出力メッセージは英語
     const finalMoodDisplay = `Based on color and keywords, we propose a track with the following elements: ${trackMoodTags} (${suggestedTrack.genre}). ${musicMoodDescription}`;
 
     moodResultDisplay.textContent = finalMoodDisplay;
@@ -309,19 +331,14 @@ function startWaveAnimation() {
     if (animationInterval) {
         clearInterval(animationInterval); 
     }
-
-    // 初期化: 右から左へ流れる設定
-    backgroundPositionX = 100; // 右端からスタート
-    waveSpeed = -0.5; // 左向き (マイナス) でスタート
+    backgroundPositionX = 100; 
+    waveSpeed = -0.5; 
 
     animationInterval = setInterval(() => {
         backgroundPositionX += waveSpeed;
-
-        // 左端(0)に到達したら、即座に右端(100)に戻る (一方通行ループ)
         if (backgroundPositionX <= 0) {
             backgroundPositionX = maxOffset; 
         }
-        
         if (waveContainer) {
             waveContainer.style.setProperty('--wave-position', `${backgroundPositionX}%`);
         }
@@ -341,7 +358,6 @@ function stopWaveAnimation() {
 }
 
 
-// 再生ボタンのイベントリスナー
 playButton.addEventListener('click', () => {
     const trackUrl = playButton.dataset.trackUrl;
     
@@ -357,17 +373,12 @@ playButton.addEventListener('click', () => {
     }
 
     if (audioPlayer.paused) {
-        // --- ★ 再生開始 ★ ---
-        
-        // UIの視覚フィードバック
         colorWheelContainer.classList.add('is-playing-pulse'); 
         const hue = selectedHsl.h;
         colorWheel.style.boxShadow = `0 0 25px 5px hsl(${hue}, 100%, 50%)`; 
-        
         playButton.classList.add('playing'); 
         playerControls.classList.add('is-playing'); 
-
-        startWaveAnimation(); // アニメーション開始！
+        startWaveAnimation(); 
 
         audioPlayer.play()
             .then(() => {
@@ -376,39 +387,28 @@ playButton.addEventListener('click', () => {
             .catch(e => {
                 alert("Playback error occurred. Check the browser console.");
                 console.error("Playback Error:", e);
-                // 失敗時、状態をリセット
                 colorWheelContainer.classList.remove('is-playing-pulse');
-                
                 playButton.classList.remove('playing');
                 playerControls.classList.remove('is-playing');
-                
                 colorWheel.style.boxShadow = `0 0 15px rgba(0, 0, 0, 0.1)`; 
-                stopWaveAnimation(); // アニメーション停止！
+                stopWaveAnimation(); 
             });
     } else {
-        // --- ★ 一時停止 ★ ---
         colorWheelContainer.classList.remove('is-playing-pulse'); 
         colorWheel.style.boxShadow = `0 0 15px rgba(0, 0, 0, 0.1)`; 
-        
         playButton.classList.remove('playing');
         playerControls.classList.remove('is-playing'); 
-        
-        stopWaveAnimation(); // アニメーション停止！
-        
+        stopWaveAnimation(); 
         audioPlayer.pause();
         console.log("Music paused.");
     }
 });
 
-// 再生が終了したらボタンとフィードバックをリセット
 audioPlayer.addEventListener('ended', () => {
     playButton.classList.remove('playing');
     playerControls.classList.remove('is-playing'); 
-    
     colorWheelContainer.classList.remove('is-playing-pulse'); 
     colorWheel.style.boxShadow = `0 0 15px rgba(0, 0, 0, 0.1)`; 
     console.log("Music playback ended.");
-    
-    stopWaveAnimation(); // アニメーション停止！
+    stopWaveAnimation(); 
 });
-
