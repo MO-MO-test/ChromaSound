@@ -5,8 +5,7 @@ body {
     background-color: #1a0a2e; /* フォールバックの色 */
     
     /* ★★★ 修正箇所：ファンタジー背景画像を設定 ★★★ */
-    /* 画像のパスは、GitHubの 'images/fantasy-cyberpunk-narnia.png' に合わせています */
-    background-image: url('images/fantasy-cyberpunk-narnia.png'); 
+    background-image: url('fantasy-cyberpunk-narnia.png'); 
     
     background-size: cover;          /* 画面全体に画像を拡大/縮小して表示 */
     background-position: center;     /* 画像を中央に配置 */
@@ -297,3 +296,4 @@ main {
     
     animation: none; 
 }
+
