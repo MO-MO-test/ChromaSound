@@ -65,13 +65,25 @@ h2 {
 /* 3. 要素のサイズ調整 */
 /* =============================================== */
 
+/* ムード入力パネル内の要素を中央揃えにする */
+#mood-input {
+    display: flex; /* パネル自体がflex */
+    flex-direction: column;
+    /* ★修正点: 内側の要素を水平方向の中央に配置 */
+    align-items: center; 
+    gap: 20px;
+    flex-grow: 1; 
+}
+
 /* カラーホイールを小さく */
 #color-wheel-container {
     width: 180px;
     height: 180px;
+    /* 水平方向の中央寄せをサポート */
+    margin: 0 auto 15px auto; 
 }
 
-/* ★★★ 再生中の脈動アニメーション（Mobile版） ★★★ */
+/* 再生中の脈動アニメーション（Mobile版） */
 .is-playing-pulse::after {
     animation: pulse 1.5s infinite alternate;
 }
@@ -84,16 +96,18 @@ h2 {
         box-shadow: 0 0 30px var(--selected-color), 0 0 10px var(--selected-color) inset;
     }
 }
-/* ★★★ ここまで ★★★ */
 
 
 /* 入力欄とボタンの調整 */
 #keywords {
+    width: 100%; /* これがないと align-items: center が効きにくい */
     font-size: 0.9em;
     padding: 10px;
+    box-sizing: border-box; /* paddingを含めて幅100%にする */
 }
 
 #analyze-button {
+    width: 100%;
     font-size: 1em;
     padding: 10px 20px;
 }
