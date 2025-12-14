@@ -71,6 +71,22 @@ h2 {
     height: 180px;
 }
 
+/* ★★★ 再生中の脈動アニメーション（Mobile版） ★★★ */
+.is-playing-pulse::after {
+    animation: pulse 1.5s infinite alternate;
+}
+
+@keyframes pulse {
+    from {
+        box-shadow: 0 0 15px var(--selected-color), 0 0 5px var(--selected-color) inset;
+    }
+    to {
+        box-shadow: 0 0 30px var(--selected-color), 0 0 10px var(--selected-color) inset;
+    }
+}
+/* ★★★ ここまで ★★★ */
+
+
 /* 入力欄とボタンの調整 */
 #keywords {
     font-size: 0.9em;
