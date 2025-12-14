@@ -67,9 +67,9 @@ h2 {
 
 /* ムード入力パネル内の要素を中央揃えにする */
 #mood-input {
-    display: flex; /* パネル自体がflex */
+    display: flex; 
     flex-direction: column;
-    /* ★修正点: 内側の要素を水平方向の中央に配置 */
+    /* ★修正強化点: これで子要素全体を水平方向の中央に配置 */
     align-items: center; 
     gap: 20px;
     flex-grow: 1; 
@@ -79,7 +79,7 @@ h2 {
 #color-wheel-container {
     width: 180px;
     height: 180px;
-    /* 水平方向の中央寄せをサポート */
+    /* 中央寄せを再適用 */
     margin: 0 auto 15px auto; 
 }
 
@@ -98,16 +98,25 @@ h2 {
 }
 
 
-/* 入力欄とボタンの調整 */
+/* キーワード入力欄とボタンの調整 */
+/* widthを調整し、margin autoで中央寄せを保証 */
 #keywords {
-    width: 100%; /* これがないと align-items: center が効きにくい */
+    /* ★修正強化点: 幅を少し狭めて margin auto が効くようにする */
+    width: 90%; 
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
     font-size: 0.9em;
     padding: 10px;
-    box-sizing: border-box; /* paddingを含めて幅100%にする */
+    box-sizing: border-box; 
 }
 
 #analyze-button {
-    width: 100%;
+    /* ★修正強化点: 幅を少し狭めて margin auto が効くようにする */
+    width: 90%; 
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
     font-size: 1em;
     padding: 10px 20px;
 }
@@ -119,6 +128,11 @@ h2 {
 }
 
 /* 再生ボタンを小さく */
+.player-controls {
+     /* 再生パネル内の要素も中央寄せ */
+    align-items: center; 
+}
+
 #play-button {
     width: 60px;
     height: 60px;
