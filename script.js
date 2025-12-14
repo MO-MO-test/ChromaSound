@@ -292,9 +292,20 @@ colorWheelCanvas.addEventListener('click', (event) => {
     selectedHsl = hsl; 
 
     const hslColor = `hsl(${hsl.h}, ${hsl.s*100}%, ${hsl.l*100}%)`;
-    colorWheel.style.setProperty('--selected-color', hslColor);
-    colorWheel.classList.add('selected'); 
     
+    // ★修正点: CSS変数 '--selected-color' を直接更新し、リングを連動させる
+    colorWheelContainer.style.setProperty('--selected-color', hslColor);
+    colorWheelContainer.classList.add('selected'); 
+    
+    // 再生ボタンのネオンも連動させる
+    // Note: CSSでネオン色に依存する要素の色を更新するため、直接DOMスタイルを操作
+    playButton.style.border = `3px solid ${hslColor}`;
+    playButton.style.boxShadow = `0 0 15px ${hslColor}`;
+    
+    // playButton の内部の三角形の色も更新 (::before要素に影響を与えるためのハック)
+    // CSS変数を使って、プレイボタンのネオンカラーを更新する
+    document.documentElement.style.setProperty('--neon-purple', hslColor);
+
     console.log(`Selected Color: HSL(${hsl.h}°, ${hsl.s*100}%, ${hsl.l*100}%)`);
 });
 
@@ -324,8 +335,8 @@ analyzeButton.addEventListener('click', () => {
     playButton.dataset.trackUrl = suggestedTrack.url; 
 
     const hslColor = `hsl(${selectedHsl.h}, ${selectedHsl.s*100}%, ${selectedHsl.l*100}%)`;
-    colorWheel.style.setProperty('--selected-color', hslColor);
-    colorWheel.classList.add('selected');
+    colorWheelContainer.style.setProperty('--selected-color', hslColor);
+    colorWheelContainer.classList.add('selected');
 });
 
 
@@ -342,10 +353,10 @@ function startWaveAnimation() {
         clearInterval(animationInterval); 
     }
     
-    // ★修正点: 初期位置を左端 (0) に設定
+    // 初期位置を左端 (0) に設定
     backgroundPositionX = 0; 
     
-    // ★修正点: 速度を正の数に設定し、左から右へ流れるようにする
+    // 速度を正の数に設定し、左から右へ流れるようにする
     waveSpeed = 0.5; 
 
     animationInterval = setInterval(() => {
@@ -383,6 +394,9 @@ playButton.addEventListener('click', () => {
         return;
     }
     
+    // 選択された色を取得
+    const hslColor = `hsl(${selectedHsl.h}, ${selectedHsl.s*100}%, ${selectedHsl.l*100}%)`;
+
     if (audioPlayer.src !== trackUrl) {
         audioPlayer.src = trackUrl;
         audioPlayer.load(); 
@@ -390,9 +404,10 @@ playButton.addEventListener('click', () => {
     }
 
     if (audioPlayer.paused) {
+        // ★修正点: CSSと連携し、脈動アニメーションを起動
         colorWheelContainer.classList.add('is-playing-pulse'); 
-        const hue = selectedHsl.h;
-        colorWheel.style.boxShadow = `0 0 25px 5px hsl(${hue}, 100%, 50%)`; 
+        colorWheelContainer.style.setProperty('--selected-color', hslColor); // 脈動の色を確定
+        
         playButton.classList.add('playing'); 
         playerControls.classList.add('is-playing'); 
         startWaveAnimation(); 
@@ -404,15 +419,15 @@ playButton.addEventListener('click', () => {
             .catch(e => {
                 alert("Playback error occurred. Check the browser console.");
                 console.error("Playback Error:", e);
+                // エラー時の停止処理
                 colorWheelContainer.classList.remove('is-playing-pulse');
                 playButton.classList.remove('playing');
                 playerControls.classList.remove('is-playing');
-                colorWheel.style.boxShadow = `0 0 15px rgba(0, 0, 0, 0.1)`; 
                 stopWaveAnimation(); 
             });
     } else {
+        // 一時停止時の停止処理
         colorWheelContainer.classList.remove('is-playing-pulse'); 
-        colorWheel.style.boxShadow = `0 0 15px rgba(0, 0, 0, 0.1)`; 
         playButton.classList.remove('playing');
         playerControls.classList.remove('is-playing'); 
         stopWaveAnimation(); 
@@ -425,7 +440,6 @@ audioPlayer.addEventListener('ended', () => {
     playButton.classList.remove('playing');
     playerControls.classList.remove('is-playing'); 
     colorWheelContainer.classList.remove('is-playing-pulse'); 
-    colorWheel.style.boxShadow = `0 0 15px rgba(0, 0, 0, 0.1)`; 
     console.log("Music playback ended.");
     stopWaveAnimation(); 
 });
