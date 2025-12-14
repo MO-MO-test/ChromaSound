@@ -136,7 +136,7 @@ h2 {
     transition: all 0.5s ease;
 }
 
-/* 再生中の脈動アニメーション */
+/* ★★★ 再生中の脈動アニメーション ★★★ */
 .is-playing-pulse::after {
     animation: pulse 1.5s infinite alternate;
 }
@@ -149,6 +149,8 @@ h2 {
         box-shadow: 0 0 30px var(--selected-color), 0 0 10px var(--selected-color) inset;
     }
 }
+/* ★★★ ここまで ★★★ */
+
 
 /* --- キーワード入力 --- */
 label {
